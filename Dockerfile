@@ -53,6 +53,8 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 COPY --from=builder --chown=nextjs:nodejs /app/prisma ./prisma
 
+RUN npm install -g prisma@6.19.2
+
 # Optional: Add Prisma generated client (standalone might have it in node_modules)
 # But prisma query engine is native binary and might not be fully traced properly by Next standalone, so let's copy the entire node_modules from builder or what Next extracted. Next standalone traces .prisma/client and it should be fine. However, sometimes running `npx prisma migrate deploy` requires `prisma` CLI. I'll omit migration automation for now, assume db is migrated.
 
