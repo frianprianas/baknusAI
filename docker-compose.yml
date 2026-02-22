@@ -17,7 +17,7 @@ services:
     container_name: baknus-app
     restart: always
     ports:
-      - "6000:6000"
+      - "8080:6000"
     depends_on:
       - db
     env_file:
