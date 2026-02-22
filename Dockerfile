@@ -60,8 +60,8 @@ RUN npm install -g prisma@6.19.2
 
 USER nextjs
 
-EXPOSE 3000
-ENV PORT 3000
+EXPOSE 6000
+ENV PORT 6000
 ENV HOSTNAME "0.0.0.0"
 
 CMD ["node", "server.js"]

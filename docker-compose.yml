@@ -17,7 +17,7 @@ services:
     container_name: baknus-app
     restart: always
     ports:
-      - "6000:3000"
+      - "6000:6000"
     depends_on:
       - db
     env_file:
@@ -25,6 +25,7 @@ services:
     environment:
       # Override DATABASE_URL so it connects to the 'db' container instead of 'localhost'
       - DATABASE_URL=postgresql://postgres:buhun666@db:5432/baknus_ai?schema=public
+      - PORT=6000
 
 volumes:
   postgres_data:
