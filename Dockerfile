@@ -19,6 +19,13 @@ ENV NEXT_TELEMETRY_DISABLED 1
 # Generate Prisma Client
 RUN npx prisma generate
 
+# Define dummy environment variables to prevent API initialization errors during build
+ENV GROQ_API_KEY=dummy-key-for-build
+ENV GEMINI_API_KEY=dummy-key-for-build
+ENV DATABASE_URL=postgresql://dummy:dummy@localhost:5432/dummy
+ENV JWT_SECRET=dummy-secret
+ENV MAILCOW_API_KEY=dummy-mailcow-key
+
 # Build Next.js app
 RUN npm run build
 
