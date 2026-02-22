@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: baknus-db
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: buhun666
+      POSTGRES_DB: baknus_ai
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  app:
+    build: .
+    container_name: baknus-app
+    restart: always
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+    env_file:
+      - .env.local
+    environment:
+      # Override DATABASE_URL so it connects to the 'db' container instead of 'localhost'
+      - DATABASE_URL=postgresql://postgres:buhun666@db:5432/baknus_ai?schema=public
+
+volumes:
+  postgres_data:
