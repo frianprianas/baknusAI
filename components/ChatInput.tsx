@@ -71,8 +71,8 @@ export default function ChatInput({ onSend, isStreaming, user }: ChatInputProps)
                 <div className="flex items-center justify-between px-5 pb-4">
                     <div className="flex items-center gap-2">
                         {/* Gemini-style Extension / Mode Selector (Hanya untuk Guru) */}
-                        {user?.tag === 'Guru' && (
-                            <>
+                        <div className="flex items-center gap-2">
+                            {user?.tag === 'Guru' && (
                                 <button
                                     onClick={() => {
                                         setInput(prev => prev.trim() ? prev + ' @PKL ' : '@PKL ');
@@ -84,10 +84,20 @@ export default function ChatInput({ onSend, isStreaming, user }: ChatInputProps)
                                     <span className="text-xl leading-none -mt-0.5">🏢</span>
                                     <span className="hidden sm:inline tracking-wide">Data PKL</span>
                                 </button>
-
-                                <div className="w-[1px] h-4 bg-white/10 mx-1 hidden sm:block"></div>
-                            </>
-                        )}
+                            )}
+                            <button
+                                onClick={() => {
+                                    setInput(prev => prev.trim() ? prev + ' @Karomah ' : '@Karomah ');
+                                    textareaRef.current?.focus();
+                                }}
+                                className="flex items-center gap-1.5 px-3 py-1.5 bg-[#d96570]/10 hover:bg-[#d96570]/20 rounded-full border border-[#d96570]/20 text-[#d96570] text-xs font-semibold transition-all shadow-sm"
+                                title="Tampilkan Data Buku Ramadan Karomah"
+                            >
+                                <span className="text-xl leading-none -mt-0.5">🌙</span>
+                                <span className="hidden sm:inline tracking-wide">Karomah</span>
+                            </button>
+                            {(user?.tag === 'Guru') && <div className="w-[1px] h-4 bg-white/10 mx-1 hidden sm:block"></div>}
+                        </div>
 
                         <button className="p-2.5 hover:bg-white/5 rounded-full text-[#b4b4b4] hover:text-white transition-colors" title="Unggah Gambar">
                             <ImageIcon size={20} />

@@ -299,14 +299,14 @@ export default function ChatInterface() {
                                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 mt-8 opacity-90">
                                     {(user?.tag === 'Guru' ? [
                                         { icon: '🏢', t: 'Data Prakerin', d: 'Cari tempat PKL Telkom', p: 'Tampilkan data tempat PKL bernama Telkom' },
-                                        { icon: '👥', t: 'Info Siswa', d: 'Siswa jurusan RPL', p: 'Tampilkan 5 daftar siswa dari jurusan RPL beserta tempat PKL-nya' },
+                                        { icon: '🌙', t: 'Rekap Karomah', d: 'Jurnal puasa siswa', p: 'Tampilkan statistik total jurnal buku ramadan Karomah saat ini' },
                                         { icon: '📊', t: 'Statistik PKL', d: 'Total siswa penempatan', p: 'Tampilkan statistik berapa banyak siswa yang sudah ditempatkan PKL' },
                                         { icon: '💡', t: 'Bantu Mengajar', d: 'Buat soal pilihan ganda', p: 'Bantu saya membuat 5 soal PG tentang jaringan komputer' }
                                     ] : [
+                                        { icon: '🌙', t: 'Buku Ramadan', d: 'Cek target Karomah', p: 'Cek total jurnal Karomah saya sejauh ini' },
                                         { icon: '💡', t: 'Bantu Belajar', d: 'Jelaskan konsep OOP', p: 'Tolong jelaskan konsep OOP dalam pemrograman Java' },
                                         { icon: '📝', t: 'Buat Ringkasan', d: 'Ringkas materi jaringan', p: 'Tolong buatkan ringkasan materi tentang topologi jaringan komputer' },
-                                        { icon: '💻', t: 'Bantu Coding', d: 'Contoh program Python', p: 'Berikan satu program sederhana menggunakan Python' },
-                                        { icon: '🚀', t: 'Ide Proyek', d: 'Proyek akhir RPL', p: 'Berikan 3 ide proyek akhir inovatif untuk siswa jurusan RPL' }
+                                        { icon: '💻', t: 'Bantu Coding', d: 'Contoh program Python', p: 'Berikan satu program sederhana menggunakan Python' }
                                     ]).map((item, i) => (
                                         <button
                                             key={i}
