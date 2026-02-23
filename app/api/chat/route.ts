@@ -181,7 +181,7 @@ ATURAN WAJIB:
     ]);
 
     // Bangun system prompt
-    let fullSystemPrompt = SYSTEM_PROMPT;
+    let fullSystemPrompt = `${SYSTEM_PROMPT}\n\nPengguna yang sedang berbincang denganmu saat ini adalah: ${decoded.name} (${userEmail}). Sapa dan panggillah dengan namanya dengan ramah.`;
 
     if (summaryContext) {
       fullSystemPrompt += `

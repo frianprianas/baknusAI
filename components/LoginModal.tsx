@@ -28,12 +28,13 @@ export default function LoginModal({ isOpen, onSuccess }: LoginModalProps) {
         setError(null);
 
         try {
+            const fullEmail = email.includes('@') ? email : `${email}@smk.baktinusantara666.sch.id`;
             const resp = await fetch("/api/auth/login", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ email, password }),
+                body: JSON.stringify({ email: fullEmail, password }),
             });
 
             const data = await resp.json();
@@ -64,7 +65,7 @@ export default function LoginModal({ isOpen, onSuccess }: LoginModalProps) {
 
                 <div className="text-center mb-8">
                     <h2 className="text-2xl font-bold font-product text-white mb-2">Selamat Datang di BaknusAI</h2>
-                    <p className="text-sm text-[#b4b4b4]">Masuk menggunakan akun Mailcow (SMK Bakti Nusantara 666)</p>
+                    <p className="text-sm text-[#b4b4b4]">Masuk menggunakan akun resmi SMK Bakti Nusantara 666</p>
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-4">
@@ -75,18 +76,21 @@ export default function LoginModal({ isOpen, onSuccess }: LoginModalProps) {
                     )}
 
                     <div className="space-y-1.5">
-                        <label className="text-[13px] font-medium text-[#b4b4b4] ml-1">Email Sekolah</label>
-                        <div className="relative">
-                            <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#5f6368]" size={18} />
+                        <label className="text-[13px] font-medium text-[#b4b4b4] ml-1">Akun Sekolah</label>
+                        <div className="relative flex items-center bg-[#1e1f20] border border-white/10 rounded-xl focus-within:border-[#4285f4] transition-all overflow-hidden">
+                            <Mail className="absolute left-3.5 text-[#5f6368]" size={18} />
                             <input
-                                type="email"
+                                type="text"
                                 required
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
-                                placeholder="email@smk.baktinusantara666.sch.id"
-                                className="w-full bg-[#1e1f20] border border-white/10 rounded-xl py-3 pl-11 pr-4 text-white text-[15px] placeholder-[#5f6368] outline-none focus:border-[#4285f4] transition-all"
+                                placeholder="nama.anda"
+                                className="w-full bg-transparent py-3 pl-11 pr-1 text-white text-[15px] placeholder-[#5f6368] outline-none"
                                 disabled={isLoading}
                             />
+                            <span className="text-[#5f6368] pr-4 text-[15px] pointer-events-none select-none whitespace-nowrap">
+                                @smk.baktinusantara666.sch.id
+                            </span>
                         </div>
                     </div>
 
