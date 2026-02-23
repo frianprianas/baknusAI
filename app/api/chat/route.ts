@@ -148,16 +148,32 @@ ATURAN WAJIB:
 2. WAJIB SELECT nama siswa. Jangan hanya return ID. Selalu sertakan JOIN ke tabel user (sebagai siswa) dan dudi atau user (sebagai guru).
 `;
 
-      const sqlModel = genAI.getGenerativeModel({
-        model: "gemini-2.5-flash",
-        systemInstruction: sqlPrompt
-      });
+      const sqlContext = trimmedMessages.map((m: any) => `${m.role}: ${m.content}`).join('\n');
+      const userPrompt = `[Histori Obrolan Sebagai Konteks]\n${sqlContext}\n\nTUGAS: Terjemahkan ucapan User terakhir dengan bergantung pada histori obrolan jika itu adalah pertanyaan lanjutan.`;
 
-      const sqlContext = trimmedMessages.map((m: any) => `${m.role}: ${m.content}`).join('\\n');
-      const preFlight = await sqlModel.generateContent(`[Histori Obrolan Sebagai Konteks]\n${sqlContext}\n\nTUGAS: Terjemahkan ucapan User terakhir dengan bergantung pada histori obrolan jika itu adalah pertanyaan lanjutan.`);
-      const generatedQuery = preFlight.response.text()?.trim() || 'NO';
+      let generatedQuery = 'NO';
+      try {
+        const sqlModel = genAI.getGenerativeModel({
+          model: "gemini-2.5-flash",
+          systemInstruction: sqlPrompt
+        });
+        const preFlight = await sqlModel.generateContent(userPrompt);
+        generatedQuery = preFlight.response.text()?.trim() || 'NO';
+      } catch (geminiSqlErr: any) {
+        console.warn('[chat] Gemini SQL Agent failed, falling back to Groq:', geminiSqlErr?.message);
+        const groqSqlResponse = await groq.chat.completions.create({
+          model: 'llama-3.3-70b-versatile',
+          messages: [
+            { role: 'system', content: sqlPrompt },
+            { role: 'user', content: userPrompt }
+          ],
+          temperature: 0.1,
+          max_tokens: 500,
+        });
+        generatedQuery = groqSqlResponse.choices[0]?.message?.content?.trim() || 'NO';
+      }
 
-      // Gemini sometimes wraps SQL in markdown blocks
+      // API outputs sometimes wrap SQL in markdown blocks
       let cleanQuery = generatedQuery.replace(/```sql/ig, '').replace(/```/g, '').trim();
 
       if (cleanQuery !== 'NO' && cleanQuery.toUpperCase().startsWith('SELECT')) {
