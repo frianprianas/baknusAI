@@ -6,6 +6,7 @@ import { cookies } from 'next/headers';
 import jwt from 'jsonwebtoken';
 import SCHOOL_KNOWLEDGE from '@/lib/schoolKnowledge';
 import { buildSummaryContext, buildPersonalContext, searchSiswaByName, executeDynamicSQL } from '@/lib/mysqlPkl';
+import { getKaromahSummary, searchKaromahSiswaByName } from '@/lib/apiKaromah';
 
 const groq = new Groq({
   apiKey: process.env.GROQ_API_KEY,
@@ -189,11 +190,13 @@ ATURAN WAJIB:
     }
     // =========================================================================
 
-    // Ambil data MySQL secara paralel
-    const [summaryContext, personalContext, searchResult] = await Promise.all([
-      buildSummaryContext(),       // Ringkasan statistik (kecil, ~2k chars)
+    // Ambil data MySQL dan API Eksternal Karomah secara paralel
+    const [summaryContext, karomahSummary, personalContext, searchResult, karomahSearchResult] = await Promise.all([
+      buildSummaryContext(),       // Ringkasan statistik PKL (kecil, ~2k chars)
+      getKaromahSummary(),         // Ringkasan statistik Karomah
       buildPersonalContext(userEmail, decoded.name),
       searchKeyword ? searchSiswaByName(searchKeyword) : Promise.resolve(''),
+      searchKeyword ? searchKaromahSiswaByName(searchKeyword) : Promise.resolve(''),
     ]);
 
     // Bangun system prompt
@@ -204,6 +207,14 @@ ATURAN WAJIB:
 
 ===== STATISTIK DATABASE PKL SEKOLAH =====
 ${summaryContext}
+==========================================`;
+    }
+
+    if (karomahSummary) {
+      fullSystemPrompt += `
+
+===== STATISTIK BUKU RAMADAN (KAROMAH) =====
+${karomahSummary}
 ==========================================`;
     }
 
@@ -219,9 +230,18 @@ ${dynamicSqlResult}
     if (searchResult) {
       fullSystemPrompt += `
 
-===== HASIL PENCARIAN SISWA: "${searchKeyword}" =====
-(Gunakan untuk menjawab pertanyaan tentang siswa ini.)
+===== HASIL PENCARIAN SISWA (DATABASE PKL MySQL): "${searchKeyword}" =====
+(Gunakan untuk menjawab pertanyaan tentang PKL atau info dasar siswa ini.)
 ${searchResult}
+=====================================================`;
+    }
+
+    if (karomahSearchResult) {
+      fullSystemPrompt += `
+
+===== HASIL PENCARIAN SISWA (BUKU RAMADAN KAROMAH): "${searchKeyword}" =====
+(Gunakan untuk menjawab aktivitas puasa/ramadan/karomah siswa tersebut.)
+${karomahSearchResult}
 =====================================================`;
     }
 
