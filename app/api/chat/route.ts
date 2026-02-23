@@ -55,15 +55,17 @@ const DAILY_LIMIT = 100;
 function extractSearchKeyword(text: string): string | null {
   const patterns = [
     /cari\s+(?:siswa\s+)?(?:dengan\s+)?nama\s+([a-zA-Z\s]+)/i,
-    /(?:info|data|tentang)\s+siswa\s+(?:bernama\s+)?([a-zA-Z\s]{3,})/i,
+    /(?:info|data|tentang|status)\s+(?:karomah|ramadan|puasa|siswa)\s+(?:bernama\s+|untuk\s+)?([a-zA-Z\s]{3,})/i,
     /siswa\s+(?:bernama|dengan\s+nama)?\s*([a-zA-Z\s]{3,})/i,
     /(?:siapa|dimana)\s+([a-zA-Z]{3,}(?:\s+[a-zA-Z]+)*)\s+(?:pkl|magang|dudi)/i,
+    /(?:bagaimana|cek)\s+(?:status|jurnal|karomah|ramadan)\s+(?:siswa\s+|)(?:bernama\s+|untuk\s+)?([a-zA-Z\s]+)/i,
+    /([a-zA-Z\s]{3,})\s+(?:status|info|pkl|karomah)-nya/i
   ];
   for (const p of patterns) {
     const m = text.match(p);
     if (m?.[1]) {
       const keyword = m[1].trim().replace(/\s+/g, ' ');
-      const stopWords = ['siswa', 'nama', 'dalam', 'yang', 'dan', 'pkl', 'data', 'info'];
+      const stopWords = ['siswa', 'nama', 'dalam', 'yang', 'dan', 'pkl', 'data', 'info', 'karomah', 'ramadan', 'jurnal', 'untuk'];
       if (keyword.length >= 3 && !stopWords.includes(keyword.toLowerCase())) {
         return keyword;
       }
