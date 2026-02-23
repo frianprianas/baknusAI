@@ -12,7 +12,22 @@ const groq = new Groq({
   apiKey: process.env.GROQ_API_KEY,
 });
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
+// Helper function to get a random Gemini client
+function getGenAI(): GoogleGenerativeAI {
+  let keys: string[] = [];
+  if (process.env.GEMINI_API_KEYS) {
+    keys = process.env.GEMINI_API_KEYS.split(',').map(k => k.trim()).filter(Boolean);
+  }
+  if (keys.length === 0 && process.env.GEMINI_API_KEY) {
+    keys = [process.env.GEMINI_API_KEY];
+  }
+
+  const selectedKey = keys.length > 0
+    ? keys[Math.floor(Math.random() * keys.length)]
+    : '';
+
+  return new GoogleGenerativeAI(selectedKey);
+}
 
 const SYSTEM_PROMPT = `Kamu adalah BaknusAI, asisten resmi SMK Bakti Nusantara 666 berbasis AI.
 
@@ -154,6 +169,7 @@ ATURAN WAJIB:
 
       let generatedQuery = 'NO';
       try {
+        const genAI = getGenAI();
         const sqlModel = genAI.getGenerativeModel({
           model: "gemini-2.5-flash",
           systemInstruction: sqlPrompt
@@ -258,6 +274,7 @@ ${personalContext}
     let groqStream: any;
 
     try {
+      const genAI = getGenAI();
       const geminiModel = genAI.getGenerativeModel({
         model: "gemini-2.5-flash",
         systemInstruction: fullSystemPrompt
