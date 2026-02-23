@@ -238,19 +238,22 @@ export async function executeDynamicSQL(query: string): Promise<string> {
 // ============================================================
 
 /**
- * Cari data siswa berdasarkan email
+ * Cari data siswa berdasarkan email (NIS) atau nama lengkap
  */
-export async function getSiswaByEmail(email: string) {
+export async function getSiswaByEmail(email: string, fullName?: string) {
     try {
         const db = getPool();
+        const localPart = email.split('@')[0];
+        const searchName = fullName && fullName !== localPart ? fullName : localPart;
+
         const [rows] = await db.execute<mysql.RowDataPacket[]>(
             `SELECT u.username as nis, u.username as nisn, u.nama as nama_siswa, k.nama_kelas, j.nama_jurusan, ta.nama_ta
              FROM user u
              LEFT JOIN kelas k ON u.kelas_id = k.id_kelas
              LEFT JOIN jurusan j ON u.jurusan_id = j.id_jurusan
              LEFT JOIN tahun_ajaran ta ON u.ta_id = ta.id_ta
-             WHERE u.level = 'Siswa' AND u.username = ? LIMIT 1`,
-            [email.split('@')[0]]
+             WHERE u.level = 'Siswa' AND (u.username = ? OR u.nama LIKE ?) LIMIT 1`,
+            [localPart, `%${searchName}%`]
         );
         return rows[0] || null;
     } catch { return null; }
@@ -319,9 +322,9 @@ export async function getRekapAbsensi(nis: string) {
 /**
  * Konteks personal untuk siswa yang sedang login
  */
-export async function buildPersonalContext(userEmail: string): Promise<string> {
+export async function buildPersonalContext(userEmail: string, fullName?: string): Promise<string> {
     try {
-        const siswa = await getSiswaByEmail(userEmail);
+        const siswa = await getSiswaByEmail(userEmail, fullName);
         if (!siswa) return '';
 
         const nis = siswa.nis;

@@ -176,7 +176,7 @@ ATURAN WAJIB:
     // Ambil data MySQL secara paralel
     const [summaryContext, personalContext, searchResult] = await Promise.all([
       buildSummaryContext(),       // Ringkasan statistik (kecil, ~2k chars)
-      buildPersonalContext(userEmail),
+      buildPersonalContext(userEmail, decoded.name),
       searchKeyword ? searchSiswaByName(searchKeyword) : Promise.resolve(''),
     ]);
 
